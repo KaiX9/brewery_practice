@@ -1,0 +1,81 @@
+<div>
+  <h3>Select a style:</h3>
+  <select
+    *ngIf="styles$ | async as styles; else emptyData"
+    (change)="getBreweryByStyle(+s_id.value)"
+    #s_id
+  >
+    <option value="" disabled selected>Select</option>
+    <option *ngFor="let s of styles" value="{{ s.styles_id }}">
+      {{ s.styles_name }}
+    </option>
+  </select>
+</div>
+<div>
+  <h3>Select a brewery:</h3>
+  <select
+    *ngIf="brewery$ | async as breweries; else emptyData"
+    (change)="getBeersByBrewery(+brewery_id.value)"
+    #brewery_id
+  >
+    <option value="" disabled selected>Select</option>
+    <option *ngFor="let b of breweries" value="{{ b.brewery_id }}">
+      {{ b.beer_name }} ({{ b.brewery_name }})
+    </option>
+  </select>
+</div>
+<hr />
+<div *ngIf="brewery_details$ | async as details">
+  <h1>{{ details.brewery_name }}</h1>
+  <a href="#" (click)="reload()">Reset</a>
+  <table>
+    <tr>
+      <td>Description:</td>
+      <td>{{ details.brewery_descript }}</td>
+    </tr>
+    <tr>
+      <td>Address:</td>
+      <td>
+        <span>{{ details.address1 }} {{ details.address2 }}</span
+        ><br />
+        <span>{{ details.city }}</span>
+      </td>
+    </tr>
+    <tr>
+      <td>Phone:</td>
+      <td>{{ details.phone }}</td>
+    </tr>
+    <tr>
+      <td>Website:</td>
+      <td><a href="{{ details.website }}" target="_blank">Go</a></td>
+    </tr>
+  </table>
+  <h2>Beers</h2>
+  <button type="button" (click)="placeOrder()">Place Order</button>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Quantity</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let r of details.beerList; let i = index">
+        <td>{{ r.beer_name }}</td>
+        <td>{{ r.beer_descript }}</td>
+        <td>
+          <input
+            type="number"
+            min="0"
+            value="0"
+            #quantity
+            (change)="updateQuantity(i, +quantity.value)"
+          />
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<ng-template #emptyData> No data available </ng-template>
